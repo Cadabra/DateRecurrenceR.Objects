@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <Authors>Sergey Olshanskiy</Authors>
-        <Description>Library for represents a recurrence pattern of date.</Description>
+        <Description>DateRecurrenceR.Objects is a .NET library for represent date recurrence pattern as object.</Description>
         <Copyright>Copyright Sergey Olshanskiy</Copyright>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <PackageTags>DateRecurrenceR;recurring-dates;date-interval;date-recurrence;date-repeat;date-patterns</PackageTags>
