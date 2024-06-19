@@ -32,7 +32,7 @@ All these methods return an instance of `IEnumerator<DateOnly>`.
 
 Example of string: `"M B0 E3652058 I1 D256"`
 
-First token meaning the recurrence period:
+### First token
 
 | token      | description        |
 |------------|--------------------|
@@ -71,7 +71,7 @@ First token meaning the recurrence period:
 | 'm' or 'M'  | M1/2   | The number of the day of month / the number of the month.                         |
 | 'w' or 'W'  | W1/2/3 | The number of the day of week / the number of the week / the number of the month. |
 
-Digits 1-7 equal days from Sunday to Saturday.
+
 
 ## Examples of Use
 
