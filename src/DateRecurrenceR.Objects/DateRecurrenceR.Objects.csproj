@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Authors>Sergey Olshanskiy</Authors>
+        <Description>Library for represents a recurrence pattern of date.</Description>
+        <Copyright>Copyright Sergey Olshanskiy</Copyright>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+        <PackageTags>DateRecurrenceR;recurring-dates;date-interval;date-recurrence;date-repeat;date-patterns</PackageTags>
+        <Version>1.0.0-alpha</Version>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <WarningsAsErrors>Nullable</WarningsAsErrors>
+        <Deterministic>true</Deterministic>
+        <Title>DateRecurrenceR.Objects</Title>
+        <PackageId>DateRecurrenceR.Objects</PackageId>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="DateRecurrenceR" Version="0.5.1-beta.1"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DateRecurrenceR.Objects", "src\DateRecurrenceR.Objects\DateRecurrenceR.Objects.csproj", "{BD5EFE63-E0AD-4223-AD41-8AE7B2875939}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DateRecurrenceR.Objects.Tests.Unit", "tests\DateRecurrenceR.Objects.Tests.Unit\DateRecurrenceR.Objects.Tests.Unit.csproj", "{7CDBB768-E24D-4ECE-9895-5FC7C42CD9E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C00FBA79-4AFA-483A-9C47-E12839498ED8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{833E0E6A-2F18-4A05-B652-624F6DCA2CA7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BD5EFE63-E0AD-4223-AD41-8AE7B2875939}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD5EFE63-E0AD-4223-AD41-8AE7B2875939}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD5EFE63-E0AD-4223-AD41-8AE7B2875939}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD5EFE63-E0AD-4223-AD41-8AE7B2875939}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CDBB768-E24D-4ECE-9895-5FC7C42CD9E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CDBB768-E24D-4ECE-9895-5FC7C42CD9E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CDBB768-E24D-4ECE-9895-5FC7C42CD9E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CDBB768-E24D-4ECE-9895-5FC7C42CD9E8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BD5EFE63-E0AD-4223-AD41-8AE7B2875939} = {C00FBA79-4AFA-483A-9C47-E12839498ED8}
+		{7CDBB768-E24D-4ECE-9895-5FC7C42CD9E8} = {833E0E6A-2F18-4A05-B652-624F6DCA2CA7}
+	EndGlobalSection
+EndGlobal
