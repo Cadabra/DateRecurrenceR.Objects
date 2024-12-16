@@ -20,7 +20,7 @@ internal sealed class WeeklyObject : IRecurrenceObject, IRecurrence
         Interval = interval;
 
         var daysCount = 0;
-        var sb = new StringBuilder("Weekly");
+        var sb = new StringBuilder("W");
         sb.Append(' ');
         sb.Append(beginDate.ToString("yyyy-MM-dd"));
 
@@ -42,13 +42,13 @@ internal sealed class WeeklyObject : IRecurrenceObject, IRecurrence
                     sb.Append(',');
                 }
 
-                sb.Append(Thread.CurrentThread.CurrentUICulture.DateTimeFormat.AbbreviatedDayNames[i]);
+                sb.Append(TwoLetterDayNames.GetByIndex(i));
                 daysCount++;
             }
         }
 
         sb.Append(' ');
-        sb.Append(Thread.CurrentThread.CurrentUICulture.DateTimeFormat.AbbreviatedDayNames[(int) firstDayOfWeek]);
+        sb.Append(TwoLetterDayNames.GetByIndex((int) firstDayOfWeek));
 
         _stringRepresentation = sb.ToString();
     }

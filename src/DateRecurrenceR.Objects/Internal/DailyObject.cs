@@ -13,7 +13,7 @@ internal sealed class DailyObject : IRecurrenceObject, IRecurrence
         EndDate = endDate;
         Interval = interval;
 
-        var sb = new StringBuilder("Daily");
+        var sb = new StringBuilder("D");
         sb.Append(' ');
         sb.Append(beginDate.ToString("yyyy-MM-dd"));
 

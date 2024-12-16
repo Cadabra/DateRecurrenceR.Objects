@@ -17,7 +17,7 @@ internal sealed class YearlyObjectByDayOfYear : IRecurrenceObject, IRecurrence
         DayOfYear = dayOfYear;
         Interval = interval;
 
-        var sb = new StringBuilder("Yearly");
+        var sb = new StringBuilder("Y");
         sb.Append(' ');
         sb.Append(beginDate.ToString("yyyy-MM-dd"));
 

@@ -17,7 +17,7 @@ internal sealed class MonthlyObjectByDayOfMonth : IRecurrenceObject, IRecurrence
         DayOfMonth = dayOfMonth;
         Interval = interval;
 
-        var sb = new StringBuilder("Monthly");
+        var sb = new StringBuilder("M");
         sb.Append(' ');
         sb.Append(beginDate.ToString("yyyy-MM-dd"));
 

@@ -21,7 +21,7 @@ internal sealed class YearlyObjectByDayOfWeek : IRecurrenceObject, IRecurrence
         MonthOfYear = monthOfYear;
         Interval = interval;
 
-        var sb = new StringBuilder("Yearly");
+        var sb = new StringBuilder("Y");
         sb.Append(' ');
         sb.Append(beginDate.ToString("yyyy-MM-dd"));
 
@@ -34,7 +34,7 @@ internal sealed class YearlyObjectByDayOfWeek : IRecurrenceObject, IRecurrence
         sb.Append(' ');
         sb.Append(interval);
         sb.Append(' ');
-        sb.Append(Thread.CurrentThread.CurrentUICulture.DateTimeFormat.AbbreviatedDayNames[(int) dayOfWeek]);
+        sb.Append(TwoLetterDayNames.GetByIndex((int) dayOfWeek));
         sb.Append(' ');
         sb.Append(numberOfWeek);
 

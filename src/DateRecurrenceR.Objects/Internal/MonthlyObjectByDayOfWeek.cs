@@ -19,7 +19,7 @@ internal sealed class MonthlyObjectByDayOfWeek : IRecurrenceObject, IRecurrence
         NumberOfWeek = numberOfWeek;
         Interval = interval;
 
-        var sb = new StringBuilder("Monthly");
+        var sb = new StringBuilder("M");
         sb.Append(' ');
         sb.Append(beginDate.ToString("yyyy-MM-dd"));
 
@@ -32,7 +32,7 @@ internal sealed class MonthlyObjectByDayOfWeek : IRecurrenceObject, IRecurrence
         sb.Append(' ');
         sb.Append(interval);
         sb.Append(' ');
-        sb.Append(Thread.CurrentThread.CurrentUICulture.DateTimeFormat.AbbreviatedDayNames[(int) dayOfWeek]);
+        sb.Append(TwoLetterDayNames.GetByIndex((int) dayOfWeek));
         sb.Append(' ');
         sb.Append(numberOfWeek);
 
