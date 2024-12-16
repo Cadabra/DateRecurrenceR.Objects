@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using DateRecurrenceR.Core;
 
 namespace DateRecurrenceR.Objects;
 
@@ -14,16 +15,15 @@ internal struct RecurrenceModelStringParser
         throw new FormatException();
     }
 
-    public static bool TryParse(string str, [NotNullWhen(true)] out RecurrenceObject? model)
+    public static bool TryParse(ReadOnlySpan<char> source, [NotNullWhen(true)] out RecurrenceObject? model)
     {
-        if (str.Length < 2)
+        if (source.Length < 2)
         {
             model = default;
             return false;
         }
 
         var startIndex = 2;
-        var source = str.AsSpan();
 
         var shortType = TryGetRecurrenceType(source[0]);
         if (shortType == ShortType.None)
@@ -32,17 +32,18 @@ internal struct RecurrenceModelStringParser
             return false;
         }
 
-        DateOnly? beginDate = null;
+        DateOnly beginDate = DateOnly.MinValue;
         DateOnly endDate = DateOnly.MaxValue;
-        int? interval = null;
+        Interval interval = new Interval(1);
         DayOfWeek? dayOfWeek = null;
-        int? dayOfMonth = null;
-        int? dayOfYear = null;
+        DayOfMonth? dayOfMonth = null;
+        DayOfYear? dayOfYear = null;
         NumberOfWeek? numberOfWeek = null;
-        int? monthOfYear = null;
+        MonthOfYear? monthOfYear = null;
         DayOfWeek? firstDayOfWeek = null;
         WeekDays? weekDays = null;
 
+#if NET6_0
         ReadOnlySpan<char> token;
         while ((token = ReadNext(ref source, ref startIndex)).Length > 0)
         {
@@ -61,13 +62,13 @@ internal struct RecurrenceModelStringParser
                     break;
                 case 'i':
                 case 'I':
-                    interval = int.Parse(token[1..]);
+                    interval = new Interval(int.Parse(token[1..]));
                     break;
                 case 'd':
                 case 'D':
                     weekDays = WeekDaysParse(token[1..]);
-                    dayOfMonth = int.Parse(token[1..]);
-                    dayOfYear = int.Parse(token[1..]);
+                    dayOfMonth = new DayOfMonth(int.Parse(token[1..]));
+                    dayOfYear = new DayOfYear(int.Parse(token[1..]));
                     break;
                 case 'w':
                 case 'W':
@@ -98,7 +99,7 @@ internal struct RecurrenceModelStringParser
                     var val3 = ReadNextSlash(ref token, ref index);
                     if (val3.Length > 0)
                     {
-                        monthOfYear = int.Parse(val3);
+                        monthOfYear = new MonthOfYear(int.Parse(val3));
                     }
 
                     break;
@@ -110,7 +111,7 @@ internal struct RecurrenceModelStringParser
                     var val1 = ReadNextSlash(ref token, ref index);
                     if (val1.Length > 0)
                     {
-                        dayOfMonth = int.Parse(val1);
+                        dayOfMonth = new DayOfMonth(int.Parse(val1));
                         index++;
                     }
                     else
@@ -121,7 +122,7 @@ internal struct RecurrenceModelStringParser
                     var val2 = ReadNextSlash(ref token, ref index);
                     if (val2.Length > 0)
                     {
-                        monthOfYear = int.Parse(val2);
+                        monthOfYear = new MonthOfYear(int.Parse(val2));
                         index++;
                     }
 
@@ -133,27 +134,117 @@ internal struct RecurrenceModelStringParser
                     break;
             }
         }
+#endif
+#if NET8_0_OR_GREATER
+        var token = ReadNext(ref source, ref startIndex);
+        while (token.Length > 0)
+        {
+            SkipSpaces(ref source, ref startIndex);
+            var c = token[0];
+
+            switch (c)
+            {
+                case 'b':
+                case 'B':
+                    beginDate = DateOnly.FromDayNumber(int.Parse(token[1..]));
+                    break;
+                case 'e':
+                case 'E':
+                    endDate = DateOnly.FromDayNumber(int.Parse(token[1..]));
+                    break;
+                case 'i':
+                case 'I':
+                    interval = new Interval(int.Parse(token[1..]));
+                    break;
+                case 'd':
+                case 'D':
+                    weekDays = WeekDaysParse(token[1..]);
+                    dayOfMonth = new DayOfMonth(int.Parse(token[1..]));
+                    dayOfYear = new DayOfYear(int.Parse(token[1..]));
+                    break;
+                case 'w':
+                case 'W':
+                {
+                    var index = 1;
+                    var val1 = ReadNextSlash(ref token, ref index);
+                    if (val1.Length > 0)
+                    {
+                        dayOfWeek = (DayOfWeek) int.Parse(val1);
+                        index++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                    var val2 = ReadNextSlash(ref token, ref index);
+                    if (val2.Length > 0)
+                    {
+                        numberOfWeek = (NumberOfWeek) int.Parse(val2);
+                        index++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                    var val3 = ReadNextSlash(ref token, ref index);
+                    if (val3.Length > 0)
+                    {
+                        monthOfYear = new MonthOfYear(int.Parse(val3));
+                    }
+
+                    break;
+                }
+                case 'm':
+                case 'M':
+                {
+                    var index = 1;
+                    var val1 = ReadNextSlash(ref token, ref index);
+                    if (val1.Length > 0)
+                    {
+                        dayOfMonth = new DayOfMonth(int.Parse(val1));
+                        index++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                    var val2 = ReadNextSlash(ref token, ref index);
+                    if (val2.Length > 0)
+                    {
+                        monthOfYear = new MonthOfYear(int.Parse(val2));
+                        index++;
+                    }
+
+                    break;
+                }
+                case 'f':
+                case 'F':
+                    firstDayOfWeek = (DayOfWeek) int.Parse(token[1..]);
+                    break;
+            }
+
+            token = ReadNext(ref source, ref startIndex);
+        }
+#endif
 
         switch (shortType)
         {
             case ShortType.Daily:
-                if (beginDate.HasValue && interval.HasValue)
-                {
-                    model = new RecurrenceObject(
-                        beginDate.Value,
-                        endDate,
-                        interval.Value);
-                    return true;
-                }
-
-                break;
+                model = new RecurrenceObject(
+                    beginDate,
+                    endDate,
+                    interval);
+                return true;
             case ShortType.Weekly:
-                if (beginDate.HasValue && interval.HasValue && weekDays != null && firstDayOfWeek.HasValue)
+                if (weekDays != null && firstDayOfWeek.HasValue)
                 {
                     model = new RecurrenceObject(
-                        beginDate.Value,
+                        beginDate,
                         endDate,
-                        interval.Value,
+                        interval,
                         weekDays,
                         firstDayOfWeek.Value);
                     return true;
@@ -162,48 +253,40 @@ internal struct RecurrenceModelStringParser
                 break;
             case ShortType.Monthly:
             {
-                if (beginDate.HasValue && interval.HasValue)
+                if (dayOfMonth.HasValue)
                 {
-                    if (dayOfMonth.HasValue)
-                    {
-                        model = new RecurrenceObject(beginDate.Value, endDate, interval.Value, dayOfMonth.Value,
-                            PeriodOf.Month);
-                        return true;
-                    }
+                    model = new RecurrenceObject(beginDate, endDate, interval, dayOfMonth.Value);
+                    return true;
+                }
 
-                    if (dayOfWeek.HasValue && numberOfWeek.HasValue)
-                    {
-                        model = new RecurrenceObject(beginDate.Value, endDate, interval.Value, dayOfWeek.Value,
-                            numberOfWeek.Value);
-                        return true;
-                    }
+                if (dayOfWeek.HasValue && numberOfWeek.HasValue)
+                {
+                    model = new RecurrenceObject(beginDate, endDate, interval, dayOfWeek.Value,
+                        numberOfWeek.Value);
+                    return true;
                 }
 
                 break;
             }
             case ShortType.Yearly:
-                if (beginDate.HasValue && interval.HasValue)
+                if (dayOfYear.HasValue)
                 {
-                    if (dayOfYear.HasValue)
-                    {
-                        model = new RecurrenceObject(beginDate.Value, endDate, interval.Value, dayOfYear.Value,
-                            PeriodOf.Year);
-                        return true;
-                    }
+                    model = new RecurrenceObject(beginDate, endDate, interval, dayOfYear.Value);
+                    return true;
+                }
 
-                    if (dayOfWeek.HasValue && numberOfWeek.HasValue && monthOfYear.HasValue)
-                    {
-                        model = new RecurrenceObject(beginDate.Value, endDate, interval.Value, dayOfWeek.Value,
-                            numberOfWeek.Value, monthOfYear.Value);
-                        return true;
-                    }
+                if (dayOfWeek.HasValue && numberOfWeek.HasValue && monthOfYear.HasValue)
+                {
+                    model = new RecurrenceObject(beginDate, endDate, interval, dayOfWeek.Value,
+                        numberOfWeek.Value, monthOfYear.Value);
+                    return true;
+                }
 
-                    if (dayOfMonth.HasValue && monthOfYear.HasValue)
-                    {
-                        model = new RecurrenceObject(beginDate.Value, endDate, interval.Value, dayOfMonth.Value,
-                            monthOfYear.Value);
-                        return true;
-                    }
+                if (dayOfMonth.HasValue && monthOfYear.HasValue)
+                {
+                    model = new RecurrenceObject(beginDate, endDate, interval, dayOfMonth.Value,
+                        monthOfYear.Value);
+                    return true;
                 }
 
                 break;

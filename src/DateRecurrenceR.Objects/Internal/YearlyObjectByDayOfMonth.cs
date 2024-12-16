@@ -1,4 +1,5 @@
 using System.Text;
+using DateRecurrenceR.Core;
 
 namespace DateRecurrenceR.Objects.Internal;
 
@@ -8,40 +9,41 @@ internal sealed class YearlyObjectByDayOfMonth : IRecurrenceObject
 
     public YearlyObjectByDayOfMonth(DateOnly beginDate,
         DateOnly endDate,
-        int dayOfMonth,
-        int monthOfYear,
-        int interval)
+        DayOfMonth dayOfMonth,
+        MonthOfYear monthOfYear,
+        Interval interval)
     {
         BeginDate = beginDate;
         EndDate = endDate;
         DayOfMonth = dayOfMonth;
         MonthOfYear = monthOfYear;
         Interval = interval;
-        
-        var sb = new StringBuilder("Y");
+
+        var sb = new StringBuilder("Yearly");
         sb.Append(' ');
-        sb.Append('B');
-        sb.Append(beginDate.DayNumber);
+        sb.Append(beginDate.ToString("yyyy-MM-dd"));
+
+        if (endDate != DateOnly.MaxValue)
+        {
+            sb.Append(' ');
+            sb.Append(endDate.ToString("yyyy-MM-dd"));
+        }
+
         sb.Append(' ');
-        sb.Append('E');
-        sb.Append(endDate.DayNumber);
-        sb.Append(' ');
-        sb.Append('I');
         sb.Append(interval);
         sb.Append(' ');
-        sb.Append('M');
-        sb.Append(dayOfMonth);
-        sb.Append('/');
-        sb.Append(monthOfYear);
+        sb.Append(((int) dayOfMonth).ToString());
+        sb.Append(' ');
+        sb.Append(((int) monthOfYear).ToString());
 
         _stringRepresentation = sb.ToString();
     }
 
     public DateOnly BeginDate { get; }
     public DateOnly EndDate { get; }
-    public int DayOfMonth { get; }
-    public int MonthOfYear { get; }
-    public int Interval { get; }
+    public DayOfMonth DayOfMonth { get; }
+    public MonthOfYear MonthOfYear { get; }
+    public Interval Interval { get; }
 
     public IEnumerator<DateOnly> ToEnumerator()
     {

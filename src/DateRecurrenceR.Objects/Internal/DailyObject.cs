@@ -1,4 +1,5 @@
 using System.Text;
+using DateRecurrenceR.Core;
 
 namespace DateRecurrenceR.Objects.Internal;
 
@@ -6,21 +7,22 @@ internal sealed class DailyObject : IRecurrenceObject
 {
     private readonly string _stringRepresentation;
 
-    public DailyObject(DateOnly beginDate, DateOnly endDate, int interval)
+    public DailyObject(DateOnly beginDate, DateOnly endDate, Interval interval)
     {
         BeginDate = beginDate;
         EndDate = endDate;
         Interval = interval;
 
-        var sb = new StringBuilder("D");
+        var sb = new StringBuilder("Daily");
         sb.Append(' ');
-        sb.Append('B');
-        sb.Append(beginDate.DayNumber);
+        sb.Append(beginDate.ToString("yyyy-MM-dd"));
+        
+        if (endDate != DateOnly.MaxValue)
+        {
+            sb.Append(' ');
+            sb.Append(endDate.ToString("yyyy-MM-dd"));
+        }
         sb.Append(' ');
-        sb.Append('E');
-        sb.Append(endDate.DayNumber);
-        sb.Append(' ');
-        sb.Append('I');
         sb.Append(interval);
 
         _stringRepresentation = sb.ToString();
@@ -28,7 +30,7 @@ internal sealed class DailyObject : IRecurrenceObject
 
     private DateOnly BeginDate { get; init; }
     private DateOnly EndDate { get; init; }
-    private int Interval { get; init; }
+    private Interval Interval { get; init; }
 
     public IEnumerator<DateOnly> ToEnumerator()
     {

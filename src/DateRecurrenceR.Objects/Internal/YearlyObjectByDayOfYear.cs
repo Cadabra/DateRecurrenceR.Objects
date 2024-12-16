@@ -1,4 +1,5 @@
 using System.Text;
+using DateRecurrenceR.Core;
 
 namespace DateRecurrenceR.Objects.Internal;
 
@@ -8,26 +9,27 @@ internal sealed class YearlyObjectByDayOfYear : IRecurrenceObject
 
     public YearlyObjectByDayOfYear(DateOnly beginDate,
         DateOnly endDate,
-        int dayOfYear,
-        int interval)
+        DayOfYear dayOfYear,
+        Interval interval)
     {
         BeginDate = beginDate;
         EndDate = endDate;
         DayOfYear = dayOfYear;
         Interval = interval;
-        
-        var sb = new StringBuilder("Y");
+
+        var sb = new StringBuilder("Yearly");
         sb.Append(' ');
-        sb.Append('B');
-        sb.Append(beginDate.DayNumber);
+        sb.Append(beginDate.ToString("yyyy-MM-dd"));
+
+        if (endDate != DateOnly.MaxValue)
+        {
+            sb.Append(' ');
+            sb.Append(endDate.ToString("yyyy-MM-dd"));
+        }
+
         sb.Append(' ');
-        sb.Append('E');
-        sb.Append(endDate.DayNumber);
-        sb.Append(' ');
-        sb.Append('I');
         sb.Append(interval);
         sb.Append(' ');
-        sb.Append('D');
         sb.Append(dayOfYear);
 
         _stringRepresentation = sb.ToString();
@@ -35,8 +37,8 @@ internal sealed class YearlyObjectByDayOfYear : IRecurrenceObject
 
     public DateOnly BeginDate { get; }
     public DateOnly EndDate { get; }
-    public int DayOfYear { get; }
-    public int Interval { get; }
+    public DayOfYear DayOfYear { get; }
+    public Interval Interval { get; }
 
     public IEnumerator<DateOnly> ToEnumerator()
     {
@@ -57,7 +59,7 @@ internal sealed class YearlyObjectByDayOfYear : IRecurrenceObject
     {
         return Recurrence.Yearly(BeginDate, EndDate, fromDate, toDate, DayOfYear, Interval);
     }
-    
+
     public new string ToString()
     {
         return _stringRepresentation;

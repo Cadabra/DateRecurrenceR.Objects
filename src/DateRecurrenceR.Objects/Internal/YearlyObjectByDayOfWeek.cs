@@ -1,4 +1,5 @@
 using System.Text;
+using DateRecurrenceR.Core;
 
 namespace DateRecurrenceR.Objects.Internal;
 
@@ -6,13 +7,12 @@ internal sealed class YearlyObjectByDayOfWeek : IRecurrenceObject
 {
     private readonly string _stringRepresentation;
 
-    public YearlyObjectByDayOfWeek(
-        DateOnly beginDate,
+    public YearlyObjectByDayOfWeek(DateOnly beginDate,
         DateOnly endDate,
         DayOfWeek dayOfWeek,
         NumberOfWeek numberOfWeek,
-        int monthOfYear,
-        int interval)
+        MonthOfYear monthOfYear,
+        Interval interval)
     {
         BeginDate = beginDate;
         EndDate = endDate;
@@ -20,24 +20,23 @@ internal sealed class YearlyObjectByDayOfWeek : IRecurrenceObject
         NumberOfWeek = numberOfWeek;
         MonthOfYear = monthOfYear;
         Interval = interval;
-        
-        var sb = new StringBuilder("Y");
+
+        var sb = new StringBuilder("Yearly");
         sb.Append(' ');
-        sb.Append('B');
-        sb.Append(beginDate.DayNumber);
+        sb.Append(beginDate.ToString("yyyy-MM-dd"));
+
+        if (endDate != DateOnly.MaxValue)
+        {
+            sb.Append(' ');
+            sb.Append(endDate.ToString("yyyy-MM-dd"));
+        }
+
         sb.Append(' ');
-        sb.Append('E');
-        sb.Append(endDate.DayNumber);
-        sb.Append(' ');
-        sb.Append('I');
         sb.Append(interval);
         sb.Append(' ');
-        sb.Append('W');
-        sb.Append((int)dayOfWeek + 1);
-        sb.Append('/');
-        sb.Append((int)numberOfWeek + 1);
-        sb.Append('/');
-        sb.Append(monthOfYear);
+        sb.Append(Thread.CurrentThread.CurrentUICulture.DateTimeFormat.AbbreviatedDayNames[(int) dayOfWeek]);
+        sb.Append(' ');
+        sb.Append(numberOfWeek);
 
         _stringRepresentation = sb.ToString();
     }
@@ -46,12 +45,13 @@ internal sealed class YearlyObjectByDayOfWeek : IRecurrenceObject
     public DateOnly EndDate { get; }
     public DayOfWeek DayOfWeek { get; }
     public NumberOfWeek NumberOfWeek { get; }
-    public int MonthOfYear { get; }
-    public int Interval { get; }
+    public MonthOfYear MonthOfYear { get; }
+    public Interval Interval { get; }
 
     public IEnumerator<DateOnly> ToEnumerator()
     {
-        return Recurrence.Yearly(BeginDate, EndDate, BeginDate, EndDate, DayOfWeek, NumberOfWeek, MonthOfYear, Interval);
+        return Recurrence.Yearly(BeginDate, EndDate, BeginDate, EndDate, DayOfWeek, NumberOfWeek, MonthOfYear,
+            Interval);
     }
 
     public IEnumerator<DateOnly> ToEnumerator(int takeCount)
@@ -68,7 +68,7 @@ internal sealed class YearlyObjectByDayOfWeek : IRecurrenceObject
     {
         return Recurrence.Yearly(BeginDate, EndDate, fromDate, toDate, DayOfWeek, NumberOfWeek, MonthOfYear, Interval);
     }
-    
+
     public new string ToString()
     {
         return _stringRepresentation;

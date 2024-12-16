@@ -1,4 +1,5 @@
 using System.Text;
+using DateRecurrenceR.Core;
 
 namespace DateRecurrenceR.Objects.Internal;
 
@@ -10,29 +11,30 @@ internal sealed class MonthlyObjectByDayOfWeek : IRecurrenceObject
         DateOnly endDate,
         DayOfWeek dayOfWeek,
         NumberOfWeek numberOfWeek,
-        int interval)
+        Interval interval)
     {
         BeginDate = beginDate;
         EndDate = endDate;
         DayOfWeek = dayOfWeek;
         NumberOfWeek = numberOfWeek;
         Interval = interval;
-        
-        var sb = new StringBuilder("M");
+
+        var sb = new StringBuilder("Monthly");
         sb.Append(' ');
-        sb.Append('B');
-        sb.Append(beginDate.DayNumber);
+        sb.Append(beginDate.ToString("yyyy-MM-dd"));
+
+        if (endDate != DateOnly.MaxValue)
+        {
+            sb.Append(' ');
+            sb.Append(endDate.ToString("yyyy-MM-dd"));
+        }
+
         sb.Append(' ');
-        sb.Append('E');
-        sb.Append(endDate.DayNumber);
-        sb.Append(' ');
-        sb.Append('I');
         sb.Append(interval);
         sb.Append(' ');
-        sb.Append('W');
-        sb.Append((int)dayOfWeek + 1);
-        sb.Append('/');
-        sb.Append((int)numberOfWeek + 1);
+        sb.Append(Thread.CurrentThread.CurrentUICulture.DateTimeFormat.AbbreviatedDayNames[(int) dayOfWeek]);
+        sb.Append(' ');
+        sb.Append(numberOfWeek);
 
         _stringRepresentation = sb.ToString();
     }
@@ -41,7 +43,7 @@ internal sealed class MonthlyObjectByDayOfWeek : IRecurrenceObject
     public DateOnly EndDate { get; }
     public DayOfWeek DayOfWeek { get; }
     public NumberOfWeek NumberOfWeek { get; }
-    public int Interval { get; }
+    public Interval Interval { get; }
 
     public IEnumerator<DateOnly> ToEnumerator()
     {

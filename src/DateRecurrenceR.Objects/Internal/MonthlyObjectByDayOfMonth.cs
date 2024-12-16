@@ -1,4 +1,5 @@
 using System.Text;
+using DateRecurrenceR.Core;
 
 namespace DateRecurrenceR.Objects.Internal;
 
@@ -6,29 +7,29 @@ internal sealed class MonthlyObjectByDayOfMonth : IRecurrenceObject
 {
     private readonly string _stringRepresentation;
 
-    public MonthlyObjectByDayOfMonth(
-        DateOnly beginDate,
+    public MonthlyObjectByDayOfMonth(DateOnly beginDate,
         DateOnly endDate,
-        int dayOfMonth,
-        int interval)
+        DayOfMonth dayOfMonth,
+        Interval interval)
     {
         BeginDate = beginDate;
         EndDate = endDate;
         DayOfMonth = dayOfMonth;
         Interval = interval;
-        
-        var sb = new StringBuilder("M");
+
+        var sb = new StringBuilder("Monthly");
         sb.Append(' ');
-        sb.Append('B');
-        sb.Append(beginDate.DayNumber);
+        sb.Append(beginDate.ToString("yyyy-MM-dd"));
+
+        if (endDate != DateOnly.MaxValue)
+        {
+            sb.Append(' ');
+            sb.Append(endDate.ToString("yyyy-MM-dd"));
+        }
+
         sb.Append(' ');
-        sb.Append('E');
-        sb.Append(endDate.DayNumber);
-        sb.Append(' ');
-        sb.Append('I');
         sb.Append(interval);
         sb.Append(' ');
-        sb.Append('D');
         sb.Append(dayOfMonth);
 
         _stringRepresentation = sb.ToString();
@@ -36,8 +37,8 @@ internal sealed class MonthlyObjectByDayOfMonth : IRecurrenceObject
 
     public DateOnly BeginDate { get; }
     public DateOnly EndDate { get; }
-    public int DayOfMonth { get; }
-    public int Interval { get; }
+    public DayOfMonth DayOfMonth { get; }
+    public Interval Interval { get; }
 
     public IEnumerator<DateOnly> ToEnumerator()
     {
@@ -58,7 +59,7 @@ internal sealed class MonthlyObjectByDayOfMonth : IRecurrenceObject
     {
         return Recurrence.Monthly(BeginDate, EndDate, fromDate, toDate, DayOfMonth, Interval);
     }
-    
+
     public new string ToString()
     {
         return _stringRepresentation;

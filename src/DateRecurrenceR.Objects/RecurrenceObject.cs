@@ -1,3 +1,4 @@
+using DateRecurrenceR.Core;
 using DateRecurrenceR.Objects.Internal;
 
 namespace DateRecurrenceR.Objects;
@@ -6,61 +7,57 @@ public class RecurrenceObject : IRecurrenceObject, IEquatable<RecurrenceObject>
 {
     private readonly IRecurrenceObject _recurrenceObject;
 
-    public RecurrenceObject(DateOnly beginDate, DateOnly endDate, int interval)
+    public RecurrenceObject(DateOnly beginDate, DateOnly endDate, Interval interval)
         : this(RecurrenceType.Daily, beginDate, endDate, interval)
     {
     }
 
-    public RecurrenceObject(DateOnly beginDate, DateOnly endDate, int interval, WeekDays weekDays,
+    public RecurrenceObject(DateOnly beginDate, DateOnly endDate, Interval interval, WeekDays weekDays,
         DayOfWeek firstDayOfWeek)
         : this(RecurrenceType.Weekly, beginDate, endDate, interval, weekDays: weekDays, firstDayOfWeek: firstDayOfWeek)
     {
     }
 
-    public RecurrenceObject(DateOnly beginDate, DateOnly endDate, int interval, DayOfWeek dayOfWeek,
+    public RecurrenceObject(DateOnly beginDate, DateOnly endDate, Interval interval, DayOfWeek dayOfWeek,
         NumberOfWeek numberOfWeek)
         : this(RecurrenceType.MonthlyByDayOfWeek, beginDate, endDate, interval, dayOfWeek: dayOfWeek,
             numberOfWeek: numberOfWeek)
     {
     }
 
-    public RecurrenceObject(DateOnly beginDate, DateOnly endDate, int interval, DayOfWeek dayOfWeek,
-        NumberOfWeek numberOfWeek, int monthOfYear)
+    public RecurrenceObject(DateOnly beginDate, DateOnly endDate, Interval interval, DayOfWeek dayOfWeek,
+        NumberOfWeek numberOfWeek, MonthOfYear monthOfYear)
         : this(RecurrenceType.YearlyByDayOfWeek, beginDate, endDate, interval, dayOfWeek: dayOfWeek,
             numberOfWeek: numberOfWeek, monthOfYear: monthOfYear)
     {
     }
 
-    public RecurrenceObject(DateOnly beginDate, DateOnly endDate, int interval, int dayOfMonth, int monthOfYear)
+    public RecurrenceObject(DateOnly beginDate, DateOnly endDate, Interval interval, DayOfMonth dayOfMonth,
+        MonthOfYear monthOfYear)
         : this(RecurrenceType.YearlyByDayOfMonth, beginDate, endDate, interval, dayOfMonth: dayOfMonth,
             monthOfYear: monthOfYear)
     {
     }
 
-    public RecurrenceObject(DateOnly beginDate, DateOnly endDate, int interval, int dayOfPeriod, PeriodOf periodOf)
-        : this(
-            periodOf switch
-            {
-                PeriodOf.Month => RecurrenceType.MonthlyByDayOfMonth,
-                PeriodOf.Year => RecurrenceType.YearlyByDayOfYear,
-                _ => throw new NotSupportedException()
-            },
-            beginDate, endDate, interval,
-            dayOfMonth: periodOf == PeriodOf.Month ? dayOfPeriod : null,
-            dayOfYear: periodOf == PeriodOf.Year ? dayOfPeriod : null)
+    public RecurrenceObject(DateOnly beginDate, DateOnly endDate, Interval interval, DayOfMonth dayOfMonth)
+        : this(RecurrenceType.MonthlyByDayOfMonth, beginDate, endDate, interval, dayOfMonth: dayOfMonth)
     {
     }
 
-    internal RecurrenceObject(
-        RecurrenceType recurrenceType,
+    public RecurrenceObject(DateOnly beginDate, DateOnly endDate, Interval interval, DayOfYear dayOfYear)
+        : this(RecurrenceType.YearlyByDayOfYear, beginDate, endDate, interval, dayOfYear: dayOfYear)
+    {
+    }
+
+    internal RecurrenceObject(RecurrenceType recurrenceType,
         DateOnly beginDate,
         DateOnly endDate,
-        int interval,
+        Interval interval,
         DayOfWeek? dayOfWeek = null,
-        int? dayOfMonth = null,
-        int? dayOfYear = null,
+        DayOfMonth? dayOfMonth = null,
+        DayOfYear? dayOfYear = null,
         NumberOfWeek? numberOfWeek = null,
-        int? monthOfYear = null,
+        MonthOfYear? monthOfYear = null,
         DayOfWeek? firstDayOfWeek = null,
         WeekDays? weekDays = null)
     {
@@ -115,13 +112,13 @@ public class RecurrenceObject : IRecurrenceObject, IEquatable<RecurrenceObject>
 
     public DateOnly BeginDate { get; init; }
     public DateOnly EndDate { get; init; }
-    public int Interval { get; init; }
+    public Interval Interval { get; init; }
 
     public DayOfWeek? DayOfWeek { get; init; }
-    public int? DayOfMonth { get; init; }
-    public int? DayOfYear { get; init; }
+    public DayOfMonth? DayOfMonth { get; init; }
+    public DayOfYear? DayOfYear { get; init; }
     public NumberOfWeek? NumberOfWeek { get; init; }
-    public int? MonthOfYear { get; init; }
+    public MonthOfYear? MonthOfYear { get; init; }
     public DayOfWeek? FirstDayOfWeek { get; init; }
     public WeekDays? WeekDays { get; init; }
 
@@ -164,12 +161,12 @@ public class RecurrenceObject : IRecurrenceObject, IEquatable<RecurrenceObject>
         if (obj.GetType() != GetType()) return false;
         return Equals((RecurrenceObject) obj);
     }
-    
+
     public bool Equals(RecurrenceObject? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        
+
         return _recurrenceObject.Equals(other._recurrenceObject) && BeginDate.Equals(other.BeginDate) &&
                EndDate.Equals(other.EndDate) && Interval == other.Interval && DayOfWeek == other.DayOfWeek &&
                DayOfMonth == other.DayOfMonth && DayOfYear == other.DayOfYear && NumberOfWeek == other.NumberOfWeek &&

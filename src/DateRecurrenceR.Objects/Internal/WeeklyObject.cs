@@ -1,4 +1,5 @@
 using System.Text;
+using DateRecurrenceR.Core;
 
 namespace DateRecurrenceR.Objects.Internal;
 
@@ -10,7 +11,7 @@ internal sealed class WeeklyObject : IRecurrenceObject
         DateOnly endDate,
         WeekDays weekDays,
         DayOfWeek firstDayOfWeek,
-        int interval)
+        Interval interval)
     {
         BeginDate = beginDate;
         EndDate = endDate;
@@ -18,28 +19,36 @@ internal sealed class WeeklyObject : IRecurrenceObject
         FirstDayOfWeek = firstDayOfWeek;
         Interval = interval;
 
-        var sb = new StringBuilder("W");
+        var daysCount = 0;
+        var sb = new StringBuilder("Weekly");
         sb.Append(' ');
-        sb.Append('B');
-        sb.Append(beginDate.DayNumber);
+        sb.Append(beginDate.ToString("yyyy-MM-dd"));
+
+        if (endDate != DateOnly.MaxValue)
+        {
+            sb.Append(' ');
+            sb.Append(endDate.ToString("yyyy-MM-dd"));
+        }
+
         sb.Append(' ');
-        sb.Append('E');
-        sb.Append(endDate.DayNumber);
-        sb.Append(' ');
-        sb.Append('I');
         sb.Append(interval);
         sb.Append(' ');
-        sb.Append('D');
         for (var i = 0; i < 7; i++)
         {
             if (weekDays[(DayOfWeek) i])
             {
-                sb.Append(i + 1);
+                if (daysCount > 0)
+                {
+                    sb.Append(',');
+                }
+
+                sb.Append(Thread.CurrentThread.CurrentUICulture.DateTimeFormat.AbbreviatedDayNames[i]);
+                daysCount++;
             }
         }
+
         sb.Append(' ');
-        sb.Append('F');
-        sb.Append((int)firstDayOfWeek + 1);
+        sb.Append(Thread.CurrentThread.CurrentUICulture.DateTimeFormat.AbbreviatedDayNames[(int) firstDayOfWeek]);
 
         _stringRepresentation = sb.ToString();
     }
@@ -48,7 +57,7 @@ internal sealed class WeeklyObject : IRecurrenceObject
     public DateOnly EndDate { get; }
     public WeekDays WeekDays { get; }
     public DayOfWeek FirstDayOfWeek { get; }
-    public int Interval { get; }
+    public Interval Interval { get; }
 
     public IEnumerator<DateOnly> ToEnumerator()
     {
