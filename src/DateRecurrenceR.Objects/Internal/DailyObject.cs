@@ -3,7 +3,7 @@ using DateRecurrenceR.Core;
 
 namespace DateRecurrenceR.Objects.Internal;
 
-internal sealed class DailyObject : IRecurrenceObject
+internal sealed class DailyObject : IRecurrenceObject, IRecurrence
 {
     private readonly string _stringRepresentation;
 
@@ -16,12 +16,13 @@ internal sealed class DailyObject : IRecurrenceObject
         var sb = new StringBuilder("Daily");
         sb.Append(' ');
         sb.Append(beginDate.ToString("yyyy-MM-dd"));
-        
+
         if (endDate != DateOnly.MaxValue)
         {
             sb.Append(' ');
             sb.Append(endDate.ToString("yyyy-MM-dd"));
         }
+
         sb.Append(' ');
         sb.Append(interval);
 
@@ -50,6 +51,13 @@ internal sealed class DailyObject : IRecurrenceObject
     public IEnumerator<DateOnly> ToEnumerator(DateOnly fromDate, DateOnly toDate)
     {
         return Recurrence.Daily(BeginDate, EndDate, fromDate, toDate, Interval);
+    }
+
+    public bool Contains(DateOnly date)
+    {
+        if (date < BeginDate || EndDate < date) return false;
+
+        return (date.DayNumber - BeginDate.DayNumber) % Interval == 0;
     }
 
     public new string ToString()

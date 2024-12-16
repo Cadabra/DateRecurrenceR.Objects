@@ -3,7 +3,7 @@ using DateRecurrenceR.Core;
 
 namespace DateRecurrenceR.Objects.Internal;
 
-internal sealed class WeeklyObject : IRecurrenceObject
+internal sealed class WeeklyObject : IRecurrenceObject, IRecurrence
 {
     private readonly string _stringRepresentation;
 
@@ -82,5 +82,16 @@ internal sealed class WeeklyObject : IRecurrenceObject
     public new string ToString()
     {
         return _stringRepresentation;
+    }
+
+    public bool Contains(DateOnly date)
+    {
+        if (!WeekDays[date.DayOfWeek]) return false;
+
+        if (date < BeginDate || EndDate < date) return false;
+
+        if ((date.DayNumber - BeginDate.DayNumber) % (Interval * 7) > 7) return false;
+        
+        return true;
     }
 }

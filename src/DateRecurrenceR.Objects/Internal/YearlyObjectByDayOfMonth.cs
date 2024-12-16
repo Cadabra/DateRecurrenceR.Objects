@@ -3,7 +3,7 @@ using DateRecurrenceR.Core;
 
 namespace DateRecurrenceR.Objects.Internal;
 
-internal sealed class YearlyObjectByDayOfMonth : IRecurrenceObject
+internal sealed class YearlyObjectByDayOfMonth : IRecurrenceObject, IRecurrence
 {
     private readonly string _stringRepresentation;
 
@@ -68,5 +68,16 @@ internal sealed class YearlyObjectByDayOfMonth : IRecurrenceObject
     public new string ToString()
     {
         return _stringRepresentation;
+    }
+
+    public bool Contains(DateOnly date)
+    {
+        if (date.Month != MonthOfYear) return false;
+
+        if (date < BeginDate || EndDate < date) return false;
+
+        if (date.Day != Math.Min(DateTime.DaysInMonth(date.Year,date.Month), DayOfMonth)) return false;
+
+        return (date.Year - BeginDate.Year) % Interval == 0;
     }
 }

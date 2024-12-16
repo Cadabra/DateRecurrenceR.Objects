@@ -3,7 +3,7 @@ using DateRecurrenceR.Core;
 
 namespace DateRecurrenceR.Objects.Internal;
 
-internal sealed class YearlyObjectByDayOfYear : IRecurrenceObject
+internal sealed class YearlyObjectByDayOfYear : IRecurrenceObject, IRecurrence
 {
     private readonly string _stringRepresentation;
 
@@ -63,5 +63,14 @@ internal sealed class YearlyObjectByDayOfYear : IRecurrenceObject
     public new string ToString()
     {
         return _stringRepresentation;
+    }
+
+    public bool Contains(DateOnly date)
+    {
+        if (date.DayOfYear != DayOfYear) return false;
+
+        if (date < BeginDate || EndDate < date) return false;
+
+        return (date.Year - BeginDate.Year) % Interval == 0;
     }
 }
